@@ -1,0 +1,139 @@
+{
+  "name": "Broken Invoice Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "invoice",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1b9f7d9e-d4e1-422d-81c4-c7035322fbea",
+      "name": "Invoice Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "15d2b56b-44a4-4446-af03-c55427e502af"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://6ddfb83a-f108-4c74-ba3e-a7c96155c116.mock.pstmn.io/post",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "invoice_amount",
+              "value": "={{ $json.body.amount }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3e205ad4-caf6-44a5-83e6-672b6bf4f427",
+      "name": "Validate Invoice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "retryOnFail": false,
+      "maxTries": 5,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"processed\",\"total\":{{$json[\"total\"]}}}",
+        "options": {}
+      },
+      "id": "8a5ebdf9-16c5-496c-a270-b03614d172a2",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const invoiceAmount = $input.first().json.json.invoice_amount;\n\nconst tax = invoiceAmount * 0.2;\nconst total = invoiceAmount + tax;\n\nreturn [\n  {\n    json: {\n      invoiceAmount,\n      tax,\n      total\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "eb578556-a3b5-4979-a728-4b5e953d3f4e",
+      "name": "Format Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Invoice Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Invoice": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "1c7qW2IRUpibKjHj",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "513e932f-6ef7-4ae4-a022-63931fa3b0a9",
+  "meta": {
+    "instanceId": "642eff7a7c7e2bf1faa410ff427f8947459bbb0c6feec4c8e2cf9f4b994f5841"
+  },
+  "nodeGroups": [],
+  "id": "QyjYjb5W4EnTLR06",
+  "tags": []
+}

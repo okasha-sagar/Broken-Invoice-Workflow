@@ -1,0 +1,72 @@
+{
+  "name": "Invoice Error Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "efcf0d3a-f3e4-4be6-aee9-a6d7cb5536d3",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e3d98829-863f-418a-8746-08a763383d4e",
+              "name": "status",
+              "value": "failed",
+              "type": "string"
+            },
+            {
+              "id": "98d98e6c-98c6-4ebb-8976-49a8e5fb4063",
+              "name": "message",
+              "value": "={{$json.execution.error.message}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "454ef23c-e92a-429f-86bb-7afe483d219e",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8dba1c79-a563-4f8c-b716-529e16a0dbba",
+  "meta": {
+    "instanceId": "642eff7a7c7e2bf1faa410ff427f8947459bbb0c6feec4c8e2cf9f4b994f5841"
+  },
+  "nodeGroups": [],
+  "id": "1c7qW2IRUpibKjHj",
+  "tags": []
+}
